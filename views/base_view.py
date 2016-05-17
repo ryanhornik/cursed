@@ -52,6 +52,10 @@ class BaseView(object):
     def cleanup(self):
         for t in self.threads:
             t.join()
+        self.screen.erase()
+        self.main_output.erase()
+        self.title_bar.erase()
+        self.main_input.erase()
         curses.endwin()
 
     def flash_and_beep(self):

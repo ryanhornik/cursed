@@ -3,29 +3,81 @@ from views import BaseView
 
 
 class Option(object):
+    @property
+    def selected_text(self):
+        return " --> "
+
+    @property
+    def unselected_text(self):
+        return ' ' * len(self.selected_text)
+
+    def __init__(self, name):
+        self.name = name
+
+    def process_key(self, source_view, key, validator=lambda change: True):
+        raise NotImplementedError("Use a concrete subclass of Option")
+
+
+class NumericOption(Option):
+    @property
+    def selected_text(self):
+        return ">{}<".format(self.value).center(6)
+
+    @property
+    def unselected_text(self):
+        return " {} ".format(self.value).center(6)
+
+    def __init__(self, name, initial=1, min_value=1, max_value=999):
+        super().__init__(name)
+        assert min_value <= initial <= max_value
+
+        self.min_value = min_value
+        self.max_value = max_value
+        self.value = initial
+
+    def process_key(self, source_view, key, validator=lambda change: True):
+        if key == curses.KEY_LEFT:
+            if self.value > self.min_value and validator(-1):
+                self.value -= 1
+                source_view.show_selected()
+                source_view.refresh()
+        elif key == curses.KEY_RIGHT:
+            if self.value < self.max_value and validator(1):
+                self.value += 1
+                source_view.show_selected()
+                source_view.refresh()
+
+
+class SelectionOption(Option):
     ACTION_TYPE = 0
     TRANSITION_TYPE = 1
 
     def __init__(self, name, action=None, transition=None):
-        self.name = name
+        super().__init__(name)
+
         if action:
-            self.option_type = Option.ACTION_TYPE
+            self.option_type = SelectionOption.ACTION_TYPE
             self.action = action
         elif transition:
-            self.option_type = Option.TRANSITION_TYPE
+            self.option_type = SelectionOption.TRANSITION_TYPE
             self.transition = transition
         else:
             raise ValueError("Option requires an action or a transition")
 
+    def process_key(self, source_view, key, validator=lambda change: True):
+        if key == curses.KEY_ENTER or key == 10:
+            self.do(source_view)
+
     def do(self, source_view):
-        if self.option_type == Option.ACTION_TYPE:
+        if self.option_type == SelectionOption.ACTION_TYPE:
             self.action()
-        elif self.option_type == Option.TRANSITION_TYPE:
+        elif self.option_type == SelectionOption.TRANSITION_TYPE:
             source_view.transition(self.transition)
 
 
 class OptionsView(BaseView):
-    ARROW = "--> "
+    def validator(self, val):
+        return True
 
     def show(self):
         super().show()
@@ -49,7 +101,7 @@ class OptionsView(BaseView):
     def show_options(self):
         self.main_output.erase()
         for i, opt in enumerate(self.options):
-            self.main_output.addstr(i + 1, len(OptionsView.ARROW), opt.name)
+            self.main_output.addstr(i + 1, len(opt.selected_text), opt.name)
         self.show_selected()
         self.refresh()
 
@@ -57,7 +109,7 @@ class OptionsView(BaseView):
         self.selected = self.selected if idx is None else idx
 
         for i, opt in enumerate(self.options):
-            self.main_output.addstr(i + 1, 0, OptionsView.ARROW if i == self.selected else ' ' * len(OptionsView.ARROW))
+            self.main_output.addstr(i + 1, 0, opt.selected_text if i == self.selected else opt.unselected_text)
 
         self.refresh()
 
@@ -73,8 +125,8 @@ class OptionsView(BaseView):
             new_selection += 1
             if new_selection >= len(self.options):
                 new_selection = 0
-        elif key == curses.KEY_ENTER or key == 10:
-            self.options[self.selected].do(source_view=self)
+        else:
+            self.options[self.selected].process_key(self, key, self.validator)
 
         if new_selection != self.selected:
             self.show_selected(new_selection)
