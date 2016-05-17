@@ -25,6 +25,7 @@ class BaseView(object):
             self.set_title(self.title)
 
     def __init__(self, title=None, *args, **kwargs):
+        self.controller = kwargs['controller']
         self.title = title
         self.threads = []
 
@@ -62,3 +63,9 @@ class BaseView(object):
 
     def loop(self):
         sleep(0.1)
+
+    def pop(self):
+        self.controller.pop()
+
+    def push(self, view):
+        self.controller.push(view)
