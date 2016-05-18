@@ -25,6 +25,14 @@ class BaseView(object):
             self.set_title(self.title)
 
     def __init__(self, title=None, *args, **kwargs):
+        self.screen = None
+        self.screen_height = None
+        self.screen_width = None
+        self.title_bar = None
+
+        self.main_output = None
+        self.main_input = None
+
         self.controller = kwargs['controller']
         self.title = title
         self.threads = []
@@ -60,7 +68,7 @@ class BaseView(object):
 
     def flash_and_beep(self):
         old_title = self.title
-        self.set_title("FFFFFFFUUUUUUUUUUUUCK")
+        self.set_title("I'm afraid I can't let you do that...")
         reset_title = threading.Timer(3, self.set_title, args=(old_title,))
         self.threads.append(reset_title)
         reset_title.start()
@@ -73,3 +81,6 @@ class BaseView(object):
 
     def push(self, view):
         self.controller.push(view)
+
+    def replace(self, view):
+        self.controller.replace(view)

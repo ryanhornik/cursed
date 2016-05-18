@@ -1,3 +1,5 @@
+from time import time
+
 
 class ViewController(object):
     def __init__(self, initial=None):
@@ -14,6 +16,7 @@ class ViewController(object):
     def push(self, view):
         if len(self.view_stack) > 0:
             self.current.cleanup()
+
         self.view_stack.append(view)
 
         self.current = self.top(controller=self)
@@ -28,6 +31,19 @@ class ViewController(object):
 
         self.current = self.top(controller=self)
         self.current.show()
+
+        return popped
+
+    def replace(self, view):
+        if len(self.view_stack) > 0:
+            self.current.cleanup()
+
+        popped = self.view_stack.pop()
+        self.view_stack.append(view)
+
+        self.current = self.top(controller=self)
+        self.current.show()
+
         return popped
 
     def cleanup(self):

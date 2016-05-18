@@ -1,7 +1,10 @@
+import curses
 from functools import partial
 
-from views import OptionsView
-from views.options_view import Option, SelectionOption, NumericOption
+from models import World
+from models.entities import Creature
+from views import OptionsView, BaseView
+from views.options_view import SelectionOption, NumericOption
 
 
 class SettingsView(OptionsView):
@@ -22,6 +25,35 @@ class MainMenuView(OptionsView):
                              SelectionOption('Settings', action=partial(self.push, SettingsView)),
                              SelectionOption('Exit', action=self.pop)
                          ), *args, **kwargs)
+
+
+class GameView(BaseView):
+    def show(self):
+        super().show()
+        curses.nonl()
+        curses.echo()
+        curses.nocbreak()
+        curses.curs_set(1)
+        self.clear_input()
+
+    def clear_input(self):
+        self.show_instructions([' ' * (self.screen_width - 2), ' ' * (self.screen_width - 2)])
+        self.main_input.move(1, 2)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(title="Dungeon", *args, **kwargs)
+        self.world = kwargs['world']
+        self.player = kwargs['player']
+
+    def loop(self):
+        self.get_command()
+
+    def get_command(self):
+        line = self.main_input.getstr().decode('utf-8').lower()
+        self.clear_input()
+
+        if line == 'exit':
+            self.pop()
 
 
 class CharacterCreationView(OptionsView):
@@ -61,5 +93,12 @@ class CharacterCreationView(OptionsView):
 
     def confirm_character(self):
         if self.available_points == 0:
-            self.controller.pop()
+            player_char = Creature()
+
+            for option in self.options:
+                if isinstance(option, NumericOption):
+                    setattr(player_char, option.name, option.value)
+
+            world = World(5, 5)
+            self.replace(partial(GameView, world=world, player=player_char))
 

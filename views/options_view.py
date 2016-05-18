@@ -2,6 +2,9 @@ import curses
 from views import BaseView
 
 
+curses.is_enter = lambda key: key == curses.KEY_ENTER or key == 10 or key == 13
+
+
 class Option(object):
     @property
     def selected_text(self):
@@ -14,7 +17,7 @@ class Option(object):
     def __init__(self, name):
         self.name = name
 
-    def process_key(self, source_view, key, validator=lambda change: True):
+    def process_key(self, source_view, key):
         raise NotImplementedError("Use a concrete subclass of Option")
 
 
@@ -35,14 +38,14 @@ class NumericOption(Option):
         self.max_value = max_value
         self.value = initial
 
-    def process_key(self, source_view, key, validator=lambda change: True):
+    def process_key(self, source_view, key):
         if key == curses.KEY_LEFT:
-            if self.value > self.min_value and validator(-1):
+            if self.value > self.min_value and source_view.validator(-1):
                 self.value -= 1
                 source_view.show_selected()
                 source_view.refresh()
         elif key == curses.KEY_RIGHT:
-            if self.value < self.max_value and validator(1):
+            if self.value < self.max_value and source_view.validator(1):
                 self.value += 1
                 source_view.show_selected()
                 source_view.refresh()
@@ -64,8 +67,8 @@ class SelectionOption(Option):
         else:
             raise ValueError("Option requires an action or a transition")
 
-    def process_key(self, source_view, key, validator=lambda change: True):
-        if key == curses.KEY_ENTER or key == 10:
+    def process_key(self, source_view, key):
+        if curses.is_enter(key):
             self.do(source_view)
 
     def do(self, source_view):
@@ -126,7 +129,7 @@ class OptionsView(BaseView):
             if new_selection >= len(self.options):
                 new_selection = 0
         else:
-            self.options[self.selected].process_key(self, key, self.validator)
+            self.options[self.selected].process_key(self, key)
 
         if new_selection != self.selected:
             self.show_selected(new_selection)
