@@ -1,1 +1,1 @@
-from .scene_controller import SceneController
+from .scene_controller import SceneController, SceneControllerDelegate

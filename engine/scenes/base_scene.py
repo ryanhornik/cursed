@@ -1,7 +1,7 @@
 import curses
 import threading
 from time import sleep
-from engine.controllers.scene_controller import SceneControllerDelegate
+from engine.controllers import SceneControllerDelegate
 
 
 class BaseScene(SceneControllerDelegate):
