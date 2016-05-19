@@ -1,3 +1,6 @@
+import traceback
+
+
 class SceneController(object):
     def __init__(self, initial=None):
         self.scene_stack = []
@@ -49,6 +52,15 @@ class SceneController(object):
 
     def loop(self):
         self.current.loop()
+
+    def start(self):
+        try:
+            while True:
+                self.loop()
+        except Exception as e:
+            traceback.print_exception(type(e), e, e.__traceback__)
+        finally:
+            self.cleanup()
 
 
 class SceneControllerDelegate(object):
