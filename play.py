@@ -1,16 +1,16 @@
 import traceback
 
-from views.view_controller import ViewController
-from views.view_functions import MainMenuView
+from game.scenes import MainMenuScene
+from engine.controllers import SceneController
 
 
 def main():
-    controller = ViewController()
-    controller.push(MainMenuView)
+    controller = SceneController()
+    controller.push(MainMenuScene)
 
     try:
         while True:
-            controller.current.loop()
+            controller.loop()
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
     finally:

@@ -1,9 +1,10 @@
 import curses
 import threading
 from time import sleep
+from engine.controllers.scene_controller import SceneControllerDelegate
 
 
-class BaseView(object):
+class BaseScene(SceneControllerDelegate):
     def show(self):
         self.screen = curses.initscr()
 
@@ -76,12 +77,3 @@ class BaseView(object):
 
     def loop(self):
         sleep(0.1)
-
-    def pop(self):
-        self.controller.pop()
-
-    def push(self, view):
-        self.controller.push(view)
-
-    def replace(self, view):
-        self.controller.replace(view)

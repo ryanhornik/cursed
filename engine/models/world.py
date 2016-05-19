@@ -1,6 +1,6 @@
 from random import random
 
-from models.entities import Entity
+from engine.models.entities import Entity
 
 
 class World(object):
@@ -23,7 +23,6 @@ class World(object):
 
     def get_visible(self, center):
         observer = self[center]
-
 
     @property
     def width(self):

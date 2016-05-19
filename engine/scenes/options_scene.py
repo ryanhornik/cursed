@@ -1,6 +1,6 @@
 import curses
-from views import BaseView
 
+from engine.scenes import BaseScene
 
 curses.is_enter = lambda key: key == curses.KEY_ENTER or key == 10 or key == 13
 
@@ -17,7 +17,7 @@ class Option(object):
     def __init__(self, name):
         self.name = name
 
-    def process_key(self, source_view, key):
+    def process_key(self, source_scene, key):
         raise NotImplementedError("Use a concrete subclass of Option")
 
 
@@ -38,17 +38,17 @@ class NumericOption(Option):
         self.max_value = max_value
         self.value = initial
 
-    def process_key(self, source_view, key):
+    def process_key(self, source_scene, key):
         if key == curses.KEY_LEFT:
-            if self.value > self.min_value and source_view.validator(-1):
+            if self.value > self.min_value and source_scene.validator(-1):
                 self.value -= 1
-                source_view.show_selected()
-                source_view.refresh()
+                source_scene.show_selected()
+                source_scene.refresh()
         elif key == curses.KEY_RIGHT:
-            if self.value < self.max_value and source_view.validator(1):
+            if self.value < self.max_value and source_scene.validator(1):
                 self.value += 1
-                source_view.show_selected()
-                source_view.refresh()
+                source_scene.show_selected()
+                source_scene.refresh()
 
 
 class SelectionOption(Option):
@@ -67,18 +67,18 @@ class SelectionOption(Option):
         else:
             raise ValueError("Option requires an action or a transition")
 
-    def process_key(self, source_view, key):
+    def process_key(self, source_scene, key):
         if curses.is_enter(key):
-            self.do(source_view)
+            self.do(source_scene)
 
-    def do(self, source_view):
+    def do(self, source_scene):
         if self.option_type == SelectionOption.ACTION_TYPE:
             self.action()
         elif self.option_type == SelectionOption.TRANSITION_TYPE:
-            source_view.transition(self.transition)
+            source_scene.transition(self.transition)
 
 
-class OptionsView(BaseView):
+class OptionsScene(BaseScene):
     def validator(self, val):
         return True
 

@@ -1,13 +1,13 @@
 import curses
 from functools import partial
 
-from models import World
-from models.entities import Creature
-from views import OptionsView, BaseView
-from views.options_view import SelectionOption, NumericOption
+from engine.models.entities import Creature
+from engine.models import World
+from engine.scenes import OptionsScene, BaseScene
+from engine.scenes.options_scene import SelectionOption, NumericOption
 
 
-class SettingsView(OptionsView):
+class SettingsScene(OptionsScene):
     def __init__(self, *args, **kwargs):
         super().__init__('Settings',
                          options=(
@@ -16,18 +16,18 @@ class SettingsView(OptionsView):
                          ), *args, **kwargs)
 
 
-class MainMenuView(OptionsView):
+class MainMenuScene(OptionsScene):
     def __init__(self, *args, **kwargs):
         super().__init__(title="Main Menu",
                          options=(
-                             SelectionOption('New Game', action=partial(self.push, CharacterCreationView)),
+                             SelectionOption('New Game', action=partial(self.push, CharacterCreationScene)),
                              SelectionOption('Load Game', action=self.flash_and_beep),
-                             SelectionOption('Settings', action=partial(self.push, SettingsView)),
+                             SelectionOption('Settings', action=partial(self.push, SettingsScene)),
                              SelectionOption('Exit', action=self.pop)
                          ), *args, **kwargs)
 
 
-class GameView(BaseView):
+class GameScene(BaseScene):
     def show(self):
         super().show()
         curses.nonl()
@@ -56,7 +56,7 @@ class GameView(BaseView):
             self.pop()
 
 
-class CharacterCreationView(OptionsView):
+class CharacterCreationScene(OptionsScene):
     def show(self):
         super().show()
         self.show_instructions(['↑↓ - change option',
@@ -100,5 +100,5 @@ class CharacterCreationView(OptionsView):
                     setattr(player_char, option.name, option.value)
 
             world = World(5, 5)
-            self.replace(partial(GameView, world=world, player=player_char))
+            self.replace(partial(GameScene, world=world, player=player_char))
 

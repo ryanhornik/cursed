@@ -1,6 +1,6 @@
 import random
 
-from models.entities import Entity
+from engine.models.entities import Entity
 
 
 class Creature(Entity):
