@@ -1,13 +1,31 @@
 import traceback
+from typing import Callable, Optional, List
+import engine.scenes
 
 
 class SceneController(object):
-    def __init__(self, initial=None):
+    """
+    Handles transitions between classes, and dictates the main loop
+
+    :cvar current_scene: An instance of the scene type at the top of the stack
+    :cvar scene_stack: The current stack of scenes
+    """
+
+    current_scene = None  # type: Optional['engine.scenes.BaseScene']
+    scene_stack = None  # type: List[Callable[..., 'engine.scenes.BaseScene']]
+
+    def __init__(self, initial: Optional[Callable[..., 'engine.scenes.BaseScene']]=None) -> None:
+        """
+        Constructs a new SceneController object
+
+        :param initial: The first scene for the controller
+        :return: nothing
+        """
+
         self.scene_stack = []
+
         if initial:
             self.push(initial)
-
-    current = None
 
     @property
     def top(self):
@@ -15,34 +33,34 @@ class SceneController(object):
 
     def push(self, scene):
         if len(self.scene_stack) > 0:
-            self.current.cleanup()
+            self.current_scene.cleanup()
 
         self.scene_stack.append(scene)
 
-        self.current = self.top(controller=self)
-        self.current.show()
+        self.current_scene = self.top(controller=self)
+        self.current_scene.show()
 
     def pop(self):
         popped = self.scene_stack.pop()
-        self.current.cleanup()
+        self.current_scene.cleanup()
 
         if len(self.scene_stack) == 0:
             exit()
 
-        self.current = self.top(controller=self)
-        self.current.show()
+        self.current_scene = self.top(controller=self)
+        self.current_scene.show()
 
         return popped
 
     def replace(self, scene):
         if len(self.scene_stack) > 0:
-            self.current.cleanup()
+            self.current_scene.cleanup()
 
         popped = self.scene_stack.pop()
         self.scene_stack.append(scene)
 
-        self.current = self.top(controller=self)
-        self.current.show()
+        self.current_scene = self.top(controller=self)
+        self.current_scene.show()
 
         return popped
 
@@ -51,7 +69,7 @@ class SceneController(object):
             self.pop()
 
     def loop(self):
-        self.current.loop()
+        self.current_scene.loop()
 
     def start(self):
         try:

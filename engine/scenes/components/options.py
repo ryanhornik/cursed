@@ -51,24 +51,11 @@ class SelectionOption(Option):
     ACTION_TYPE = 0
     TRANSITION_TYPE = 1
 
-    def __init__(self, name, action=None, transition=None):
+    def __init__(self, name, action=None):
         super().__init__(name)
-
-        if action:
-            self.option_type = SelectionOption.ACTION_TYPE
-            self.action = action
-        elif transition:
-            self.option_type = SelectionOption.TRANSITION_TYPE
-            self.transition = transition
-        else:
-            raise ValueError("Option requires an action or a transition")
+        self.action = action
 
     def process_key(self, source_scene, key):
         if curses.is_enter(key):
-            self.do(source_scene)
-
-    def do(self, source_scene):
-        if self.option_type == SelectionOption.ACTION_TYPE:
             self.action()
-        elif self.option_type == SelectionOption.TRANSITION_TYPE:
-            source_scene.transition(self.transition)
+

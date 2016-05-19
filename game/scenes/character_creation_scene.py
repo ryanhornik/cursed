@@ -8,8 +8,8 @@ from engine.scenes.components import NumericOption, SelectionOption
 
 
 class CharacterCreationScene(OptionsScene):
-    def show(self):
-        super().show()
+    def draw_elements(self):
+        super().draw_elements()
         self.show_instructions(['↑↓ - change option',
                                 '←→ - change value      Remaining Points {}'.format(self.available_points)])
         self.show_options()

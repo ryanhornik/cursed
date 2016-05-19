@@ -22,6 +22,7 @@ class WorldScene(BaseScene):
         self.main_input.move(1, 2)
 
     def loop(self):
+        super().loop()
         self.get_command()
 
     def get_command(self):

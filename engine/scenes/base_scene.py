@@ -1,6 +1,5 @@
 import curses
 import threading
-from time import sleep
 from engine.controllers import SceneControllerDelegate
 
 
@@ -12,6 +11,9 @@ class BaseScene(SceneControllerDelegate):
         curses.cbreak()
         curses.curs_set(0)  # don't show cursor.
 
+        self.draw_elements()
+
+    def draw_elements(self):
         self.screen.keypad(True)
 
         self.screen.erase()
@@ -75,5 +77,13 @@ class BaseScene(SceneControllerDelegate):
         self.nonvolitile_threads.append(reset_title)
         reset_title.start()
 
+    def resize(self):
+        self.screen_height, self.screen_width = self.screen.getmaxyx()
+        self.screen.erase()
+        curses.resizeterm(self.screen_height, self.screen_width)
+        self.draw_elements()
+        self.screen.refresh()
+
     def loop(self):
-        sleep(0.1)
+        if curses.is_term_resized(self.screen_height, self.screen_width):
+            self.resize()

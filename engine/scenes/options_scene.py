@@ -9,8 +9,8 @@ class OptionsScene(BaseScene):
     def validator(self, val):
         return True
 
-    def show(self):
-        super().show()
+    def draw_elements(self):
+        super().draw_elements()
         self.show_instructions(['↑↓ - change option', 'Enter↵ - confirm'])
         self.show_options()
 
@@ -62,4 +62,5 @@ class OptionsScene(BaseScene):
             self.show_selected(new_selection)
 
     def loop(self):
+        super().loop()
         self.update_selection()
