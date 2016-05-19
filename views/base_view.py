@@ -35,7 +35,7 @@ class BaseView(object):
 
         self.controller = kwargs['controller']
         self.title = title
-        self.threads = []
+        self.nonvolitile_threads = []
 
     def set_title(self, title):
         self.title = title
@@ -58,7 +58,8 @@ class BaseView(object):
         self.refresh()
 
     def cleanup(self):
-        for t in self.threads:
+        for t in self.nonvolitile_threads:
+            t.cancel()
             t.join()
         self.screen.erase()
         self.main_output.erase()
@@ -70,7 +71,7 @@ class BaseView(object):
         old_title = self.title
         self.set_title("I'm afraid I can't let you do that...")
         reset_title = threading.Timer(3, self.set_title, args=(old_title,))
-        self.threads.append(reset_title)
+        self.nonvolitile_threads.append(reset_title)
         reset_title.start()
 
     def loop(self):
