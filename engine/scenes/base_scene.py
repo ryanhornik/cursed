@@ -59,9 +59,16 @@ class BaseScene(SceneControllerDelegate):
 
         self.controller = controller
         self.title = title
-        self.nonvolitile_threads = []
+        self.nonvolatile_threads = []
 
     def set_title(self, title):
+        """
+        Sets the title displayed at the top of the screen, and displays it
+
+        :param title: the title to be displayed at the top of the screen
+        :type title: str
+        :return: returns nothing
+        """
         self.title = title
         self.title_bar.erase()
         self.title_bar.box()
@@ -69,12 +76,25 @@ class BaseScene(SceneControllerDelegate):
         self.refresh()
 
     def refresh(self):
+        """
+        Refreshes the screen and each sub-window
+        Should be overridden and extended by subclasses that add new windows
+
+        :return: returns nothing
+        """
         self.screen.refresh()
         self.title_bar.refresh()
         self.main_output.refresh()
         self.main_input.refresh()
 
     def show_instructions(self, instructions):
+        """
+        Sets the instructions displayed at the bottom of the screen, and displays them
+
+        :param instructions: The instructions to display, one list entry per line
+        :type instructions: list[str]
+        :return: returns nothing
+        """
         self.main_input.erase()
         self.main_input.box()
         for i, inst in enumerate(instructions):
@@ -82,7 +102,13 @@ class BaseScene(SceneControllerDelegate):
         self.refresh()
 
     def cleanup(self):
-        for t in self.nonvolitile_threads:
+        """
+        Removes all this instance's information from the screen, and cleans up resources
+        Should be called anytime this Scene will be replaced
+
+        :return: returns nothing
+        """
+        for t in self.nonvolatile_threads:
             t.cancel()
             t.join()
         self.screen.erase()
@@ -95,10 +121,16 @@ class BaseScene(SceneControllerDelegate):
         old_title = self.title
         self.set_title("I'm afraid I can't let you do that...")
         reset_title = threading.Timer(3, self.set_title, args=(old_title,))
-        self.nonvolitile_threads.append(reset_title)
+        self.nonvolatile_threads.append(reset_title)
         reset_title.start()
 
     def resize(self):
+        """
+        Updates the screen to handle a resizing of the terminal window
+        May cause an error if the window becomes too small
+
+        :return: returns nothing
+        """
         self.screen_height, self.screen_width = self.screen.getmaxyx()
         self.screen.erase()
         curses.resizeterm(self.screen_height, self.screen_width)
@@ -106,5 +138,11 @@ class BaseScene(SceneControllerDelegate):
         self.screen.refresh()
 
     def loop(self):
+        """
+        Receives input from the user then responds
+        Should be extended by subclasses to handle different input types
+
+        :return: returns nothing
+        """
         if curses.is_term_resized(self.screen_height, self.screen_width):
             self.resize()
