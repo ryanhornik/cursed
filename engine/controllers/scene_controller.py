@@ -4,16 +4,7 @@ import traceback
 class SceneController(object):
     """
     Handles transitions between classes, and dictates the main loop
-
-    :cvar current_scene: An instance of the scene type at the top of the stack
-    :cvar scene_stack: The current stack of scenes
-
-    :type current_scene: BaseScene
-    :type scene_stack: list[class subclassing BaseScene]
     """
-
-    current_scene = None
-    scene_stack = None
 
     def __init__(self, initial=None):
         """
@@ -23,7 +14,7 @@ class SceneController(object):
         :type initial: a class subclassing BaseScene
         :return: returns nothing
         """
-
+        self.current_scene = None
         self.scene_stack = []
         if initial:
             self.push(initial)
@@ -121,22 +112,3 @@ class SceneController(object):
             traceback.print_exception(type(e), e, e.__traceback__)
         finally:
             self.cleanup()
-
-
-class SceneControllerDelegate(object):
-    """
-    Delegates the transition functions of SceneController to SceneControllerDelegate's subclasses
-    The subclassses must define controller
-    """
-
-    def pop(self):
-        return self.controller.pop()
-    pop.__doc__ = SceneController.pop.__doc__
-
-    def push(self, scene):
-        self.controller.push(scene)
-    push.__doc__ = SceneController.push.__doc__
-
-    def replace(self, scene):
-        self.controller.replace(scene)
-    replace.__doc__ = SceneController.replace.__doc__

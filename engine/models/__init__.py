@@ -1,2 +1,1 @@
-from .world import World
-from . import entities
+from engine.models.world import World

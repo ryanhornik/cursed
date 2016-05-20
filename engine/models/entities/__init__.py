@@ -1,2 +1,2 @@
-from .entity import Entity
-from .creature import Creature
+from engine.models.entities.entity import Entity
+from engine.models.entities.creature import Creature
