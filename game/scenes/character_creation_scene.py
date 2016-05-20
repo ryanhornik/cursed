@@ -14,8 +14,9 @@ class CharacterCreationScene(OptionsScene):
                                 '←→ - change value      Remaining Points {}'.format(self.available_points)])
         self.show_options()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(title="Choose Stats",
+    def __init__(self, controller):
+        super().__init__(controller=controller,
+                         title="Choose Stats",
                          options=(
                              NumericOption('strength'),
                              NumericOption('constitution'),
@@ -24,7 +25,7 @@ class CharacterCreationScene(OptionsScene):
                              NumericOption('perception'),
                              NumericOption('luck'),
                              SelectionOption("Confirm", action=self.confirm_character)
-                         ), *args, **kwargs)
+                         ))
 
     def loop(self):
         self.show_instructions(['↑↓ - change option',

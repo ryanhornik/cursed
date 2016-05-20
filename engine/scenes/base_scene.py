@@ -5,6 +5,11 @@ from engine.controllers import SceneControllerDelegate
 
 class BaseScene(SceneControllerDelegate):
     def show(self):
+        """
+        Creates the screen and draws elements
+
+        :return: returns nothing
+        """
         self.screen = curses.initscr()
 
         curses.noecho()  # don't echo the keys on the screen
@@ -14,6 +19,12 @@ class BaseScene(SceneControllerDelegate):
         self.draw_elements()
 
     def draw_elements(self):
+        """
+        Draws all the elements on the screen
+        Should be overridden by subclasses, and subclasses should make a call to super().draw_elements()
+
+        :return: returns nothing
+        """
         self.screen.keypad(True)
 
         self.screen.erase()
@@ -27,7 +38,17 @@ class BaseScene(SceneControllerDelegate):
         if self.title:
             self.set_title(self.title)
 
-    def __init__(self, title=None, *args, **kwargs):
+    def __init__(self, controller, title):
+        """
+        Creates a new scene object
+
+        :param title: the title to be displayed at the top of the screen
+        :type title: str
+        :param controller: the scene controller that instantiated this object
+        :type controller: SceneController
+
+        :return: returns nothing
+        """
         self.screen = None
         self.screen_height = None
         self.screen_width = None
@@ -36,7 +57,7 @@ class BaseScene(SceneControllerDelegate):
         self.main_output = None
         self.main_input = None
 
-        self.controller = kwargs['controller']
+        self.controller = controller
         self.title = title
         self.nonvolitile_threads = []
 

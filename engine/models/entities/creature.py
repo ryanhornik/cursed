@@ -5,6 +5,26 @@ from engine.models.entities import Entity
 
 class Creature(Entity):
     def __init__(self, strength=1, constitution=1, dexterity=1, intelligence=1, perception=1, luck=1, level=1):
+        """
+        Initializes a creature with the specified stats
+
+        :param strength: The creatures strength
+        :param constitution: The creatures constitution
+        :param dexterity: The creatures dexterity
+        :param intelligence: The creatures intelligence
+        :param perception: The creatures perception
+        :param luck: The creatures luck
+        :param level: The creatures level
+        :type strength: int
+        :type constitution: int
+        :type dexterity: int
+        :type intelligence: int
+        :type perception: int
+        :type luck: int
+        :type level: int
+
+        :return: returns nothing
+        """
         self.strength = strength
         self.constitution = constitution
         self.dexterity = dexterity
@@ -18,8 +38,11 @@ class Creature(Entity):
     @property
     def vision(self):
         """
-        Returns the distance the creature is capable of seeing
+        The distance the creature is capable of seeing
         A creature with 0 perception is considered to be blind
+
+        :return: returns the distance the creature is capable of seeing
+        :rtype: int
         """
         if self.perception == 0:
             return 0
@@ -28,8 +51,11 @@ class Creature(Entity):
     @property
     def hearing_threshold(self):
         """
-        Returns the minimum decibels the creature is capable of hearing
+        The minimum decibels the creature is capable of hearing
         A creature with 0 perception is considered to be deaf, sound degrades over distance as a square root
+
+        :return: returns the minimum decibels the creature is capable of hearing
+        :rtype: int
         """
         if self.perception == 0:
             return 0
@@ -37,14 +63,22 @@ class Creature(Entity):
 
     @property
     def attack_power(self):
+        """
+        The amount of damage the creature will do
+
+        :return: returns the amount of damage the creature will do
+        :rtype: int
+        """
         return self.strength // 3 + 1
 
     def receive_damage(self, attacker):
         """
         Determines how much damage the creature will receive from the attacker
 
+        :param attacker: the creature that is attacking this creature
         :type attacker: Creature
         :return: The amount of damage the creature received
+        :rtype: int
         """
         attack = attacker.attack_power
 
@@ -56,8 +90,10 @@ class Creature(Entity):
         """
         Determines if the Creature will dodge the attacker
 
+        :param attacker: the creature that is attacking this creature
         :type attacker: Creature
-        :return: bool: Whether the creature dodged the attack
+        :return: Whether the creature dodged the attack
+        :rtype: bool
         """
         net_luck = self.luck - attacker.luck
         accuracy = attacker.dexterity * 0.1

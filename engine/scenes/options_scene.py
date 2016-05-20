@@ -2,8 +2,6 @@ import curses
 
 from engine.scenes import BaseScene
 
-curses.is_enter = lambda key: key == curses.KEY_ENTER or key == 10 or key == 13
-
 
 class OptionsScene(BaseScene):
     def validator(self, val):
@@ -14,8 +12,8 @@ class OptionsScene(BaseScene):
         self.show_instructions(['↑↓ - change option', 'Enter↵ - confirm'])
         self.show_options()
 
-    def __init__(self, title=None, options=None, *args, **kwargs):
-        super().__init__(title, *args, **kwargs)
+    def __init__(self, controller, title, options=None):
+        super().__init__(controller, title)
 
         self.options = []
         self.selected = None
@@ -56,7 +54,7 @@ class OptionsScene(BaseScene):
             if new_selection >= len(self.options):
                 new_selection = 0
         else:
-            self.options[self.selected].process_key(self, key)
+            self.options[self.selected].process_keypress(self, key)
 
         if new_selection != self.selected:
             self.show_selected(new_selection)

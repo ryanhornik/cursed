@@ -4,10 +4,10 @@ from engine.scenes import BaseScene
 
 
 class WorldScene(BaseScene):
-    def __init__(self, *args, **kwargs):
-        super().__init__(title="Dungeon", *args, **kwargs)
-        self.world = kwargs['world']
-        self.player = kwargs['player']
+    def __init__(self, controller, world, player):
+        super().__init__(controller=controller, title="Dungeon")
+        self.world = world
+        self.player = player
 
     def show(self):
         super().show()

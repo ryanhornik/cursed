@@ -21,9 +21,6 @@ class World(object):
         self.__length = width * height
         self.__grid = [[None] * width] * height
 
-    def get_visible(self, center):
-        observer = self[center]
-
     @property
     def width(self):
         return self.__width
