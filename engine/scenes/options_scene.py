@@ -13,6 +13,18 @@ class OptionsScene(BaseScene):
         self.show_options()
 
     def __init__(self, controller, title, options=None):
+        """
+        Creates a new options scene object
+
+        :param controller: the scene controller that instantiated this object
+        :type controller: SceneController
+        :param title: the title to be displayed at the top of the screen
+        :type title: str
+        :param options: the options to be used shown in the scene
+        :type options: list(options)
+
+        :return: returns nothing
+        """
         super().__init__(controller, title)
 
         self.options = []
@@ -21,12 +33,26 @@ class OptionsScene(BaseScene):
             self.set_options(options)
 
     def set_options(self, options):
+        """
+        Sets the options for the scene
+
+        :param options: the options to be used shown in the scene
+        :type options: list(options)
+
+        :return: returns nothing
+        """
+
         self.options = []
         for opt in options:
             self.options.append(opt)
         self.selected = 0
 
     def show_options(self):
+        """
+        Displays the options for the scene
+
+        :return: returns nothing
+        """
         self.main_output.erase()
         for i, opt in enumerate(self.options):
             self.main_output.addstr(i + 1, len(opt.selected_text), opt.name)
@@ -34,6 +60,13 @@ class OptionsScene(BaseScene):
         self.refresh()
 
     def show_selected(self, idx=None):
+        """
+        Displays the appropriate symbols near the selected and unselected options
+
+        :param idx: the index of the selected option if any
+        :type idx: int
+        :return: returns nothing
+        """
         self.selected = self.selected if idx is None else idx
 
         for i, opt in enumerate(self.options):
@@ -42,6 +75,12 @@ class OptionsScene(BaseScene):
         self.refresh()
 
     def update_selection(self):
+        """
+        Updates which option is selected based on a keypress
+        Also forwards non up/down arrow keys to the currently selected option
+
+        :return: returns nothing
+        """
         key = self.screen.getch()
 
         new_selection = self.selected
