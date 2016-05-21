@@ -5,19 +5,28 @@ import coverage
 
 if __name__ == "__main__":
     from sys import argv
-    module = argv[1] if len(argv) > 1 else ''
 
     cov = coverage.Coverage(
-        source=[module if module else '.'],
+        source=['.'],
         omit=['tests/*', 'test.py'],
         branch=True
     )
 
-    suite = unittest.TestLoader().discover('tests.{}'.format(module) if module else 'tests')
+    suite = unittest.TestLoader().discover('tests')
     runner = unittest.TextTestRunner(verbosity=1)
 
     cov.start()
     runner.run(suite)
     cov.stop()
 
-    cov.html_report(directory='htmlcov_{}'.format(module) if module else 'htmlcov_all')
+    overall_cov = cov.html_report(directory='htmlcov_all')
+    engine_cov = cov.html_report(directory='htmlcov_engine', include=['engine/*'])
+    game_cov = cov.html_report(directory='htmlcov_game', include=['game/*'])
+
+    f = open('last_coverage', 'w')
+    f.writelines([
+        "Overall: {}\n".format(overall_cov),
+        "Engine: {}\n".format(engine_cov),
+        "Game: {}\n".format(game_cov)
+    ])
+    f.close()
