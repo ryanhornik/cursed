@@ -3,5 +3,5 @@ python:
   - "3.5"
 script:
   - pip install -r requirements.txt
-  - source coverage_reports.sh
+  - sh coverage_reports.sh
 after_success: coveralls

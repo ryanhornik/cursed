@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-coverage run --source='.' --omit='tests/*','test.py' test.py
+coverage run --branch --source='.' --omit='tests/*','test.py' test.py
+RESULT="$?"
+if [ "$RESULT" != '0' ];
+    then
+        exit $RESULT
+fi
 
 echo ''
 echo 'Overall Coverage Report'
@@ -17,3 +22,4 @@ coverage report --include='game/*'
 coverage html
 coverage html --include='engine/*'
 coverage html --include='game/*'
+exit 0
