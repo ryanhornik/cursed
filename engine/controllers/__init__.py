@@ -1,2 +1,2 @@
-from engine.controllers.scene_controller import SceneController
-from engine.controllers.scene_controller_delegate import SceneControllerDelegate
+from .scene_controller import SceneController
+from .scene_controller_delegate import SceneControllerDelegate

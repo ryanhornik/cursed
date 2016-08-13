@@ -1,1 +1,1 @@
-from engine.models.world import World
+from .world import World
