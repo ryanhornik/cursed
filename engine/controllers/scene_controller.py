@@ -56,7 +56,8 @@ class SceneController(object):
         self.current_scene.cleanup()
 
         if len(self.scene_stack) == 0:
-            exit()
+            self.exit()
+            return
 
         self.current_scene = self.top(controller=self)
         self.current_scene.show()
@@ -112,3 +113,11 @@ class SceneController(object):
             traceback.print_exception(type(e), e, e.__traceback__)
         finally:
             self.cleanup()
+
+    def exit(self, *args, **kwargs):
+        """
+        Ends the program execution when the bottom of the stack is reached
+        Simply forwards to builtin exit command (makes it testing this functionality simple)
+        :return: returns nothing
+        """
+        exit(args, kwargs)
